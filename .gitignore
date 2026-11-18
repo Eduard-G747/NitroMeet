@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+test-results/
+*.log
+.DS_Store
+*.tsbuildinfo
+whisper-bin/
+livekit-bin/
+.env
+.env.*
+coverage/

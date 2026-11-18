@@ -1,0 +1,59 @@
+# When you publish a release (on github.com, or by pushing a v* tag and creating a release from it),
+# this builds the Windows installer from the source and attaches it, unless the release already has one.
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build the installer for (e.g. v1.0.0)
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  TAG: ${{ github.event.release.tag_name || inputs.tag }}
+  GH_TOKEN: ${{ github.token }}
+  GH_REPO: ${{ github.repository }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      has-exe: ${{ steps.assets.outputs.has-exe }}
+    steps:
+      - id: assets
+        run: |
+          assets=$(gh release view "$TAG" --json assets -q '.assets[].name')
+          if grep -qi '\.exe$' <<< "$assets"; then echo "has-exe=true" >> "$GITHUB_OUTPUT"; fi
+
+  windows:
+    needs: check
+    if: needs.check.outputs.has-exe != 'true'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Use the release tag as the app version
+        shell: bash
+        run: |
+          v="${TAG#v}"
+          if [[ "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then npm version "$v" --no-git-tag-version --allow-same-version; fi
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run dist:ci
+      - name: Attach the installer to the release
+        shell: bash
+        run: |
+          cd dist
+          sha256sum NitroMeet-Setup-*.exe > SHA256SUMS.txt
+          gh release upload "$TAG" NitroMeet-Setup-*.exe SHA256SUMS.txt --clobber
