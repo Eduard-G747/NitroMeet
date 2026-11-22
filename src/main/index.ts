@@ -25,7 +25,8 @@ import type {
   Settings,
   SettingsPatch,
   TranscriptLine,
-  WhisperModelId
+  WhisperModelId,
+  UpdateCheckResult
 } from '@shared/types'
 import { MeetingStore } from './meetings'
 import { NotesService } from './notes'
@@ -33,6 +34,7 @@ import { SettingsStore } from './settings'
 import { SfuManager } from './sfu'
 import { Transcriber } from './transcriber'
 import { initLog, lanAddress, log, nitroScribeMeetingsDir } from './util'
+import { Updater } from './updater'
 import { WhisperManager } from './whisper'
 
 const devServer = !app.isPackaged ? process.env.ELECTRON_RENDERER_URL : undefined
@@ -124,6 +126,12 @@ async function main() {
   const send = (channel: string, payload?: unknown) => {
     if (win && !win.isDestroyed()) win.webContents.send(channel, payload)
   }
+
+  const updater = new Updater(
+    () => settings.get().updates.autoCheck,
+    (m) => send('app:toast', { kind: 'info', message: m }),
+    () => (win && !win.isDestroyed() ? win : null)
+  )
   const showWindow = () => {
     if (!win) return
     if (win.isMinimized()) win.restore()
@@ -212,9 +220,14 @@ async function main() {
         { role: 'zoomOut' }
       ]
     },
+    {
+      label: 'Help',
+      submenu: [{ label: 'Check for updates…', click: () => void updater.check() }]
+    },
     { role: 'windowMenu' }
   ]
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+  updater.init()
 
   // --- Permissions / network -------------------------------------------------------------
   // Camera + mic are the point of the app; anything else — or any other webContents — is denied.
@@ -402,6 +415,7 @@ async function main() {
   handle('whisper:status', () => whisper.getStatus())
   handle('whisper:install', (model: WhisperModelId) => whisper.install(model))
   handle('whisper:cancel', () => whisper.cancelInstall())
+  handle('updates:check', (): Promise<UpdateCheckResult> => updater.check())
   // Let the user point at a .bin already on disk instead of downloading (e.g. NitroScribe's copy).
   handle('transcription:pickModel', async () => {
     const r = await dialog.showOpenDialog(win!, {

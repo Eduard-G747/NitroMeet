@@ -55,6 +55,8 @@ function SecretField({ label, name, placeholder, hint }: { label: string; name: 
 function General() {
   const settings = useStore((s) => s.settings)
   const update = useStore((s) => s.updateSettings)
+  const toast = useStore((s) => s.toast)
+  const [checking, setChecking] = useState(false)
   return (
     <div className="space-y-4">
       <Field label="Display name" hint="Shown to other participants and on your transcript lines.">
@@ -77,6 +79,36 @@ function General() {
           <option value="light">Light</option>
         </select>
       </Field>
+      <div className="space-y-2 rounded-xl border border-border bg-panel-2/50 px-3 py-3">
+        <Toggle
+          checked={settings.updates.autoCheck}
+          onChange={(v) => void update({ updates: { autoCheck: v } })}
+          label="Check for updates automatically"
+        />
+        <p className="text-[11.5px] leading-relaxed text-muted">
+          NitroMeet checks GitHub Releases on launch and installs updates when you restart — nothing else is sent.
+        </p>
+        <button
+          className="nm-btn w-fit text-[12px]"
+          onClick={async () => {
+            setChecking(true)
+            try {
+              const r = await api.updates.check()
+              if (r.status === 'available') toast('info', `NitroMeet v${r.version} is ready — restart to install.`)
+              else if (r.status === 'up-to-date') toast('info', 'NitroMeet is up to date.')
+              else if (r.status === 'disabled') toast('info', 'Automatic update checks are off.')
+              else toast('info', 'Update check unavailable in this build.')
+            } catch (e) {
+              toast('error', (e as Error).message)
+            } finally {
+              setChecking(false)
+            }
+          }}
+          disabled={checking}
+        >
+          <RefreshCw size={13} className={checking ? 'animate-spin' : ''} /> {checking ? 'Checking…' : 'Check for updates now'}
+        </button>
+      </div>
       <div className="flex gap-2 pt-1">
         <button className="nm-btn" onClick={() => void api.app.openFolder('data')}>
           <FolderOpen size={14} /> Open data folder

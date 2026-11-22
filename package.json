@@ -19,9 +19,11 @@
     "dist:ci": "electron-vite build && electron-builder --win --x64 --publish never"
   },
   "dependencies": {
+    "electron-updater": "^6.8.12",
     "livekit-server-sdk": "^2.20.0"
   },
   "devDependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
     "@tailwindcss/vite": "^4.3.5",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",

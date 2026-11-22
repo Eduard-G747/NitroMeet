@@ -10,6 +10,7 @@ import type {
   SfuStatus,
   ToastEvent,
   TranscriptEvent,
+  UpdateCheckResult,
   WhisperModelId,
   WhisperStatus
 } from './types'
@@ -59,6 +60,10 @@ export interface NitroMeetApi {
     /** Store a secret (API key) encrypted in secrets.json; null clears it. */
     setKey(name: SecretName, value: string | null): Promise<SettingsView>
     onChanged(cb: (s: SettingsView) => void): () => void
+  }
+  updates: {
+    /** Check GitHub Releases now (packaged builds only). */
+    check(): Promise<UpdateCheckResult>
   }
   sfu: {
     status(): Promise<SfuStatus>

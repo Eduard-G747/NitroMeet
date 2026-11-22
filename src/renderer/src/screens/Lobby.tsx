@@ -284,7 +284,8 @@ export function Lobby() {
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
-      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-8">
+      <div className="relative isolate mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-8">
+        <div className="nm-hero-glow" />
         <header className="mb-9 flex items-center justify-between">
           <div className="flex items-center gap-3.5">
             <Logo className="h-11 w-11" />

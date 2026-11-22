@@ -70,7 +70,7 @@ Electron 45 + electron-vite 6 + React 19 + Tailwind 4 + livekit-client. Windows-
 - Honest caveat: `/invite` is cleartext HTTP on the LAN — a token can be sniffed on the local network, but without the fragment key the sniffed room join still can't read media.
 - The renderer can't reach the open internet: CSP `connect-src` is WebSocket + localhost only; all other network I/O (binary/model downloads, invite answers, AI requests) happens in main.
 - Secrets at rest: `secrets.json` is DPAPI-encrypted (`safeStorage`), keys host-bound; `settings.json` is scrubbed and `logs` never contain transcript text, tokens or keys.
-- No telemetry, no accounts, no auto-update. Downloads are SHA-256-verified against `src/shared/manifests.ts`.
+- No telemetry, no accounts. Update checks are opt-in (`settings.updates.autoCheck`, on by default): `updater.ts` uses `electron-updater` against the GitHub repo (`publish` in `electron-builder.yml`), downloads in the background and prompts to restart — packaged builds only, never in dev/e2e. Downloads are SHA-256-verified against `src/shared/manifests.ts`.
 - Electron fuses (`electron-builder.yml`): no RunAsNode, no `NODE_OPTIONS`, no `--inspect`, ASAR integrity validation, app loads only from ASAR.
 
 ## NitroScribe interop

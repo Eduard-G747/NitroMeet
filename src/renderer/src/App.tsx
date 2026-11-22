@@ -32,9 +32,11 @@ export default function App() {
 
   return (
     <div className="h-full">
-      {screen === 'lobby' && <Lobby />}
-      {screen === 'meeting' && <Meeting />}
-      {screen === 'summary' && <Summary />}
+      <div key={screen} className="nm-screen-enter h-full">
+        {screen === 'lobby' && <Lobby />}
+        {screen === 'meeting' && <Meeting />}
+        {screen === 'summary' && <Summary />}
+      </div>
       <Toasts />
     </div>
   )

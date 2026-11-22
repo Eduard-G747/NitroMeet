@@ -65,7 +65,7 @@ NitroMeet is LAN-first today. Two ways to go further:
 - **The window can't phone home.** The renderer's content security policy only allows WebSocket and localhost connections — exactly what it needs to talk to a LiveKit server — and nothing else.
 - **Transcripts and recordings are local files.** Meetings live as plain JSON in `%APPDATA%\NitroMeet`; nothing syncs anywhere unless you send it (to your own NitroScribe folder, or an endpoint you chose).
 - **Verified downloads.** The meeting server, speech engine and models download once and are checked against pinned SHA-256 fingerprints.
-- **No telemetry:** no accounts, analytics, crash reporting or auto-updates.
+- **No telemetry:** no accounts, analytics or crash reporting. Update checks are opt-in (Settings → General) and only fetch release metadata from GitHub.
 
 > Please make sure the people you meet with are OK with being transcribed. Recording laws differ by country and state.
 

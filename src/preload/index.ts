@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 import type { DisplaySource, NitroMeetApi } from '@shared/api'
-import type { SettingsView, SfuStatus, ToastEvent, TranscriptEvent, WhisperStatus } from '@shared/types'
+import type { SettingsView, SfuStatus, ToastEvent, TranscriptEvent, UpdateCheckResult, WhisperStatus } from '@shared/types'
 
 async function invoke<T>(channel: string, ...args: unknown[]): Promise<T> {
   try {
@@ -33,6 +33,9 @@ const api: NitroMeetApi = {
     update: (patch) => invoke('settings:update', patch),
     setKey: (name, value) => invoke('settings:setKey', name, value),
     onChanged: on<SettingsView>('settings:changed')
+  },
+  updates: {
+    check: () => invoke<UpdateCheckResult>('updates:check')
   },
   sfu: {
     status: () => invoke('sfu:status'),

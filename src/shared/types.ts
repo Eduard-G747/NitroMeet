@@ -51,6 +51,10 @@ export interface Settings {
     /** Write finished meetings into NitroScribe's data folder so they appear there natively. */
     autoSend: boolean
   }
+  updates: {
+    /** Check GitHub Releases on launch and offer to install new versions. */
+    autoCheck: boolean
+  }
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -78,7 +82,8 @@ export const DEFAULT_SETTINGS: Settings = {
     apiKey: ''
   },
   ai: { provider: 'ollama', baseUrl: 'http://127.0.0.1:11434', model: 'llama3.2:3b', apiKey: '' },
-  nitroScribe: { autoSend: true }
+  nitroScribe: { autoSend: true },
+  updates: { autoCheck: true }
 }
 
 export type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K] }
@@ -206,3 +211,7 @@ export interface ToastEvent {
   kind: 'info' | 'error'
   message: string
 }
+
+export type UpdateCheckResult =
+  | { status: 'up-to-date' | 'checking' | 'unavailable' | 'disabled'; version?: string }
+  | { status: 'available'; version?: string }
