@@ -1,5 +1,8 @@
 # NitroMeet
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)]()
+
 **Private, self-hosted video meetings — the meeting server runs inside the app.**
 
 NitroMeet is a video-calling app with a built-in notetaker. When you start a meeting, a real SFU ([livekit-server](https://github.com/livekit/livekit)) launches on your own PC and the media flows directly between the people on the call. There is no cloud, no account, and nobody's servers in the middle — your PC is the server.

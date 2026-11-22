@@ -4,8 +4,8 @@ copyright: Copyright (c) 2026 Eduard Georgescu. MIT License.
 # electron-updater reads releases from this repo (the Release workflow attaches the installer there).
 publish:
   provider: github
-  owner: eduard-georgescu
-  repo: nitromeet
+  owner: Eduard-G747
+  repo: NitroMeet
 directories:
   output: dist
 files:
